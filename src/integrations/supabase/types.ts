@@ -14,7 +14,242 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attempts: {
+        Row: {
+          client_fingerprint: string | null
+          id: string
+          integrity_event_count: number
+          max_score: number
+          participant_id: string
+          quiz_id: string
+          result_token: string
+          score: number | null
+          started_at: string
+          status: string
+          submitted_at: string | null
+        }
+        Insert: {
+          client_fingerprint?: string | null
+          id?: string
+          integrity_event_count?: number
+          max_score?: number
+          participant_id: string
+          quiz_id: string
+          result_token?: string
+          score?: number | null
+          started_at?: string
+          status?: string
+          submitted_at?: string | null
+        }
+        Update: {
+          client_fingerprint?: string | null
+          id?: string
+          integrity_event_count?: number
+          max_score?: number
+          participant_id?: string
+          quiz_id?: string
+          result_token?: string
+          score?: number | null
+          started_at?: string
+          status?: string
+          submitted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attempts_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integrity_events: {
+        Row: {
+          attempt_id: string
+          event_type: string
+          id: string
+          metadata: Json
+          notification_status: string
+          occurred_at: string
+          participant_id: string
+        }
+        Insert: {
+          attempt_id: string
+          event_type: string
+          id?: string
+          metadata?: Json
+          notification_status?: string
+          occurred_at?: string
+          participant_id: string
+        }
+        Update: {
+          attempt_id?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+          notification_status?: string
+          occurred_at?: string
+          participant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integrity_events_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integrity_events_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      participants: {
+        Row: {
+          college_email: string
+          created_at: string
+          id: string
+          name: string
+          registration_number: string
+        }
+        Insert: {
+          college_email: string
+          created_at?: string
+          id?: string
+          name: string
+          registration_number: string
+        }
+        Update: {
+          college_email?: string
+          created_at?: string
+          id?: string
+          name?: string
+          registration_number?: string
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          correct_option: string
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          options: Json
+          question_text: string
+          quiz_id: string
+        }
+        Insert: {
+          correct_option: string
+          created_at?: string
+          display_order: number
+          id?: string
+          is_active?: boolean
+          options: Json
+          question_text: string
+          quiz_id: string
+        }
+        Update: {
+          correct_option?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          options?: Json
+          question_text?: string
+          quiz_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizzes: {
+        Row: {
+          created_at: string
+          id: string
+          question_count: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          question_count?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          question_count?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      responses: {
+        Row: {
+          attempt_id: string
+          created_at: string
+          id: string
+          is_correct: boolean
+          question_id: string
+          selected_option: string | null
+        }
+        Insert: {
+          attempt_id: string
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          question_id: string
+          selected_option?: string | null
+        }
+        Update: {
+          attempt_id?: string
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          question_id?: string
+          selected_option?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "responses_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
