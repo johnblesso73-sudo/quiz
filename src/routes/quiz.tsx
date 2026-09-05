@@ -10,6 +10,7 @@ import {
   Loader2,
   RefreshCw,
   ShieldAlert,
+  Timer as TimerIcon,
 } from "lucide-react";
 
 import { Backdrop } from "@/components/quiz/Backdrop";
@@ -34,9 +35,11 @@ import {
   type OptionKey,
   type PublicQuestion,
 } from "@/lib/quiz-schemas";
-import { clearSession, loadAnswers, loadSession, saveAnswers } from "@/lib/quiz-session";
+import { clearSession, getDeadline, loadAnswers, loadSession, saveAnswers } from "@/lib/quiz-session";
 import type { AttemptSession } from "@/lib/quiz-schemas";
 import { cn } from "@/lib/utils";
+const QUIZ_DURATION_MS = 25 * 60 * 1000;
+
 
 export const Route = createFileRoute("/quiz")({
   ssr: false,
@@ -198,6 +201,34 @@ function QuizRunner({ session }: { session: AttemptSession }) {
       setSubmitError(error.message || "Submission failed. Check your connection and retry."),
   });
 
+  // Countdown timer: 25 minutes from the first time this attempt opens the quiz.
+  const deadline = useMemo(
+    () => getDeadline(session.attemptId, QUIZ_DURATION_MS),
+    [session.attemptId],
+  );
+  const [remaining, setRemaining] = useState(() => Math.max(0, deadline - Date.now()));
+  const autoSubmitted = useRef(false);
+
+  useEffect(() => {
+    const tick = () => setRemaining(Math.max(0, deadline - Date.now()));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [deadline]);
+
+  useEffect(() => {
+    if (remaining > 0 || autoSubmitted.current || mutation.isPending || mutation.isSuccess) return;
+    autoSubmitted.current = true;
+    setConfirmOpen(false);
+    mutation.mutate();
+  }, [remaining, mutation]);
+
+  const totalSeconds = Math.ceil(remaining / 1000);
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+  const lowTime = remaining <= 60_000;
+
+
   function choose(option: OptionKey) {
     if (!current) return;
     const next = { ...answers, [current.id]: option };
@@ -262,10 +293,36 @@ function QuizRunner({ session }: { session: AttemptSession }) {
               Question {index + 1} of {total}
             </h1>
           </div>
-          <div className="rounded-2xl border border-glass-border bg-glass px-4 py-2 text-right">
-            <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Participant</p>
-            <p className="text-sm font-semibold">{query.data?.participantName}</p>
+          <div className="flex items-center gap-3">
+            <div
+              role="timer"
+              aria-live="off"
+              aria-label={`Time remaining: ${minutes} minutes ${seconds} seconds`}
+              className={cn(
+                "flex items-center gap-2 rounded-2xl border px-4 py-2 tabular-nums",
+                lowTime
+                  ? "glow-ring border-destructive/60 bg-destructive/15 text-destructive"
+                  : "border-glass-border bg-glass",
+              )}
+            >
+              <TimerIcon className="size-4" aria-hidden="true" />
+              <div className="text-left">
+                <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                  Time left
+                </p>
+                <p className="text-sm font-semibold">
+                  {minutes}:{seconds}
+                </p>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-glass-border bg-glass px-4 py-2 text-right">
+              <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                Participant
+              </p>
+              <p className="text-sm font-semibold">{query.data?.participantName}</p>
+            </div>
           </div>
+
         </header>
 
         <div className="mt-6">
