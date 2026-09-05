@@ -28,6 +28,7 @@ import {
 import { getQuizQuestions, recordIntegrityEvent, submitAttempt } from "@/lib/quiz.functions";
 import {
   CAUGHT_MESSAGE,
+  INTEGRITY_EVENT_TYPES,
   OPTION_KEYS,
   QUIZ_TITLE,
   type OptionKey,
@@ -53,8 +54,8 @@ export const Route = createFileRoute("/quiz")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "robots", content: "noindex" },
     ],
-    meta_robots: undefined,
   }),
   component: QuizPage,
 });
@@ -120,7 +121,7 @@ function QuizRunner({ session }: { session: AttemptSession }) {
   const progress = total > 0 ? (answeredCount / total) * 100 : 0;
 
   const report = useCallback(
-    (eventType: Parameters<typeof logEvent>[0]["data"]["eventType"], showCaught = false) => {
+    (eventType: (typeof INTEGRITY_EVENT_TYPES)[number], showCaught = false) => {
       if (showCaught) {
         setWarning(`${CAUGHT_MESSAGE} — this screenshot signal has been recorded.`);
         if (warnTimer.current) clearTimeout(warnTimer.current);
