@@ -120,7 +120,7 @@ function QuizRunner({ session }: { session: AttemptSession }) {
   const progress = total > 0 ? (answeredCount / total) * 100 : 0;
 
   const report = useCallback(
-    (eventType: Parameters<typeof logEvent>[0]["data"]["eventType"], showCaught = false) => {
+    (eventType: (typeof INTEGRITY_EVENT_TYPES)[number], showCaught = false) => {
       if (showCaught) {
         setWarning(`${CAUGHT_MESSAGE} — this screenshot signal has been recorded.`);
         if (warnTimer.current) clearTimeout(warnTimer.current);
