@@ -24,6 +24,7 @@ export function clearSession() {
   try {
     sessionStorage.removeItem(KEY);
     sessionStorage.removeItem(ANSWERS_KEY);
+    sessionStorage.removeItem("dt-quiz-deadline");
   } catch {
     /* noop */
   }
