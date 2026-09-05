@@ -47,3 +47,25 @@ export function loadAnswers(attemptId: string): Record<string, string> {
     return {};
   }
 }
+
+const DEADLINE_KEY = "dt-quiz-deadline";
+
+/** Returns the attempt deadline (ms epoch), creating one on first call. */
+export function getDeadline(attemptId: string, durationMs: number): number {
+  try {
+    const raw = sessionStorage.getItem(DEADLINE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as { attemptId: string; deadline: number };
+      if (parsed.attemptId === attemptId) return parsed.deadline;
+    }
+  } catch {
+    /* noop */
+  }
+  const deadline = Date.now() + durationMs;
+  try {
+    sessionStorage.setItem(DEADLINE_KEY, JSON.stringify({ attemptId, deadline }));
+  } catch {
+    /* noop */
+  }
+  return deadline;
+}
