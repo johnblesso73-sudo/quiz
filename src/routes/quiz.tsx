@@ -10,6 +10,7 @@ import {
   Loader2,
   RefreshCw,
   ShieldAlert,
+  Timer as TimerIcon,
 } from "lucide-react";
 
 import { Backdrop } from "@/components/quiz/Backdrop";
