@@ -34,7 +34,7 @@ import {
   type OptionKey,
   type PublicQuestion,
 } from "@/lib/quiz-schemas";
-import { clearSession, loadAnswers, loadSession, saveAnswers } from "@/lib/quiz-session";
+import { clearSession, getDeadline, loadAnswers, loadSession, saveAnswers } from "@/lib/quiz-session";
 import type { AttemptSession } from "@/lib/quiz-schemas";
 import { cn } from "@/lib/utils";
 
