@@ -199,6 +199,34 @@ function QuizRunner({ session }: { session: AttemptSession }) {
       setSubmitError(error.message || "Submission failed. Check your connection and retry."),
   });
 
+  // Countdown timer: 25 minutes from the first time this attempt opens the quiz.
+  const deadline = useMemo(
+    () => getDeadline(session.attemptId, QUIZ_DURATION_MS),
+    [session.attemptId],
+  );
+  const [remaining, setRemaining] = useState(() => Math.max(0, deadline - Date.now()));
+  const autoSubmitted = useRef(false);
+
+  useEffect(() => {
+    const tick = () => setRemaining(Math.max(0, deadline - Date.now()));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [deadline]);
+
+  useEffect(() => {
+    if (remaining > 0 || autoSubmitted.current || mutation.isPending || mutation.isSuccess) return;
+    autoSubmitted.current = true;
+    setConfirmOpen(false);
+    mutation.mutate();
+  }, [remaining, mutation]);
+
+  const totalSeconds = Math.ceil(remaining / 1000);
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+  const lowTime = remaining <= 60_000;
+
+
   function choose(option: OptionKey) {
     if (!current) return;
     const next = { ...answers, [current.id]: option };
