@@ -28,6 +28,7 @@ import {
 import { getQuizQuestions, recordIntegrityEvent, submitAttempt } from "@/lib/quiz.functions";
 import {
   CAUGHT_MESSAGE,
+  INTEGRITY_EVENT_TYPES,
   OPTION_KEYS,
   QUIZ_TITLE,
   type OptionKey,
