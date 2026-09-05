@@ -38,6 +38,8 @@ import {
 import { clearSession, getDeadline, loadAnswers, loadSession, saveAnswers } from "@/lib/quiz-session";
 import type { AttemptSession } from "@/lib/quiz-schemas";
 import { cn } from "@/lib/utils";
+const QUIZ_DURATION_MS = 25 * 60 * 1000;
+
 
 export const Route = createFileRoute("/quiz")({
   ssr: false,
