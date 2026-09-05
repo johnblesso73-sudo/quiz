@@ -293,10 +293,36 @@ function QuizRunner({ session }: { session: AttemptSession }) {
               Question {index + 1} of {total}
             </h1>
           </div>
-          <div className="rounded-2xl border border-glass-border bg-glass px-4 py-2 text-right">
-            <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Participant</p>
-            <p className="text-sm font-semibold">{query.data?.participantName}</p>
+          <div className="flex items-center gap-3">
+            <div
+              role="timer"
+              aria-live="off"
+              aria-label={`Time remaining: ${minutes} minutes ${seconds} seconds`}
+              className={cn(
+                "flex items-center gap-2 rounded-2xl border px-4 py-2 tabular-nums",
+                lowTime
+                  ? "glow-ring border-destructive/60 bg-destructive/15 text-destructive"
+                  : "border-glass-border bg-glass",
+              )}
+            >
+              <TimerIcon className="size-4" aria-hidden="true" />
+              <div className="text-left">
+                <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                  Time left
+                </p>
+                <p className="text-sm font-semibold">
+                  {minutes}:{seconds}
+                </p>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-glass-border bg-glass px-4 py-2 text-right">
+              <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                Participant
+              </p>
+              <p className="text-sm font-semibold">{query.data?.participantName}</p>
+            </div>
           </div>
+
         </header>
 
         <div className="mt-6">
