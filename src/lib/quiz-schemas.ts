@@ -57,7 +57,7 @@ export const integrityEventSchema = attemptCredentialsSchema.extend({
   metadata: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).default({}),
 });
 
-export const CAUGHT_MESSAGE = "YOU GOT CAUGHT IN K";
+export const CAUGHT_MESSAGE = "YOU GOT CAUGHT IN 4K";
 
 export type PublicQuestion = {
   id: string;
